@@ -284,6 +284,12 @@ define("esprimaJsContentAssist", [], function() {
 	 */
 	function visit(node, context, operation, postoperation) {
 		var i, key, child, children;
+		
+		// uncomment to test that stack heights are consistent
+//		var cnt;
+//		if (context && context._scopeStack) { 
+//			cnt = context._scopeStack.length;
+//		}
 		if (operation(node, context, true)) {
 			// gather children to visit
 			children = [];
@@ -337,6 +343,15 @@ define("esprimaJsContentAssist", [], function() {
 			if (postoperation) {
 				postoperation(node, context, false);
 			}
+
+			// uncomment to test that stack heights are consistent before and after visit
+//			if (context && context._scopeStack) { 
+//				if (cnt !== context._scopeStack.length) {
+//					console.error("Uh oh");
+//					console.error(node);
+//					console.error(context._scopeStack);
+//				}
+//			}
 		}
 	}
 
@@ -708,6 +723,9 @@ define("esprimaJsContentAssist", [], function() {
 			node.inferredType = "Number";
 		} else if (type === "FunctionDeclaration" || type === "FunctionExpression") {
 			env.popScope();
+			if (node.body && node.body.isConstructor) {
+				env.popScope();
+			}
 		} else if (type === "VariableDeclarator") {
 			if (node.init) {
 				inferredType = node.init.inferredType;
