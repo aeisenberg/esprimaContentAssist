@@ -908,17 +908,28 @@ define("esprimaJsContentAssist", [], function() {
 						
 						/** looks up the name in the hierarchy */
 						lookupName : function(name, target) {
+						
+							// translate function names on object into safe names
+							var swapper = function(name) {
+								switch (name) {
+									case "prototype":
+									case "toString":
+									case "hasOwnProperty":
+									case "toLocaleString":
+									case "valueOf":
+									case "isProtoTypeOf":
+									case "propertyIsEnumerable":
+										return "$_$" + name;
+									default:
+										return name;
+								}
+							};
+						
 							var innerLookup = function(name, type, allTypes) {
-
 								var res = type[name];
 								
 								// if we are in Object, then we may have special prefixed names to deal with
 								var proto = type.$$proto;
-								if (!res && !proto) {
-									name = "$_$" + name;					
-									res = type[name];
-								}
-								
 								if (res) {
 									return res;
 								} else {
@@ -928,7 +939,7 @@ define("esprimaJsContentAssist", [], function() {
 									return null;
 								}
 							};
-							return innerLookup(name, this._allTypes[this.scope(target)], this._allTypes);
+							return innerLookup(swapper(name), this._allTypes[this.scope(target)], this._allTypes);
 						},
 						
 						createProposals : function(targetType) {
