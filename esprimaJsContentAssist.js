@@ -294,7 +294,7 @@ define("esprimaJsContentAssist", [], function() {
 			// gather children to visit
 			children = [];
 			for (key in node) {
-				if (key !== "range" && key !== "errors") {
+				if (key !== "range" && key !== "errors" && key !== "target") {
 					child = node[key];
 					if (child instanceof Array) {
 						for (i = 0; i < child.length; i++) {
@@ -530,17 +530,17 @@ define("esprimaJsContentAssist", [], function() {
 					// also note that this means we create synthetic nodes for arguments of method calls and
 					// after binary expressions...I think this is all right. (ADE)
 					
-					var exprStatement = { 
-						expression : {
-							name: "",  // an empty expression
-							type: "Identifier",
-							range : [offset, offset+1]
-						},
-						type :"ExpressionStatement",
-						range : [offset, offset+1]
-					};
-					
-					parent.body.push(exprStatement);
+//					var exprStatement = { 
+//						expression : {
+//							name: "",  // an empty expression
+//							type: "Identifier",
+//							range : [offset, offset+1]
+//						},
+//						type :"ExpressionStatement",
+//						range : [offset, offset+1]
+//					};
+//					
+//					parent.body.push(exprStatement);
 
 			} else if (parent.type === "VariableDeclarator" && (!parent.init || isBefore(offset, parent.init.range))) {
 				// the name of a variable declaration
@@ -617,7 +617,7 @@ define("esprimaJsContentAssist", [], function() {
 				name = node.fname;
 			}
 			params = node.params;
-			if (name) {
+			if (name && !isBefore(env.offset, node.range)) {
 				// if we have a name, then add it to the scope
 				env.addFunction(name, params, node.target, "Function");
 			}
@@ -677,8 +677,16 @@ define("esprimaJsContentAssist", [], function() {
 		var type = node.type, name, inferredType, newTypeName, rightMost, kvps, i;
 		
 		if (type === "Program") {
-			// do nothing...
+			// if we've gotten here and we are still in range, then 
+			// we are completing as a top-level entity with no prefix
+			env.createProposals();
 		} else if (type === "BlockStatement" || type === "CatchClause") {
+			if (inRange(env.offset, node.range)) {
+				// if we've gotten here and we are still in range, then 
+				// we are completing as a top-level entity with no prefix
+				env.createProposals();
+			}
+		
 			env.popScope();
 			
 		} if (type === "MemberExpression") {
@@ -989,6 +997,8 @@ define("esprimaJsContentAssist", [], function() {
 							if (proto) {
 								this.createProposals(proto);
 							}
+							// We're done!
+							throw "done";
 						}
 					};
 					// need to use a copy of types since we make changes to it.
