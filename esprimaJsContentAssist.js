@@ -794,7 +794,7 @@ define("esprimaJsContentAssist", [], function() {
 			try {
 				var root = parse(buffer);
 				// note that if selection has length > 0, then just ignore everything past the start
-				var completionKind = shouldVisit(root, selection.start, prefix, buffer);
+				var completionKind = shouldVisit(root, selection.offset, prefix, buffer);
 				if (completionKind) {
 					var environment = {
 						/** Each element is the type of the current scope, which is a key into the types array */
@@ -808,11 +808,11 @@ define("esprimaJsContentAssist", [], function() {
 						/** an array of proposals generated */
 						proposals : [], 
 						/** the offset of content assist invocation */
-						offset : selection.start, 
+						offset : selection.offset, 
 						/** 
 						 * the location of the start of the area that will be replaced 
 						 */
-						replaceStart : selection.start - prefix.length, 
+						replaceStart : selection.offset - prefix.length, 
 						/** the prefix of the invocation */
 						prefix : prefix, 
 						/** the entire contents being completed on */
