@@ -433,12 +433,18 @@ define("esprimaJsContentAssist", [], function() {
 		if (memberExpr.property) {
 			end = memberExpr.property.range[0];
 		} else {
-			end = memberExpr.range[1];
+			// no property expression, use the end of the memberExpr as the end to look at
+			// in this case assume that the member expression ends just after the dot
+			// this allows content assist invocations to work on the member expression when there
+			// is no property
+			end = memberExpr.range[1] + 2;
 		}
-		// only do the work if we are in between the 
+		// we are not considered "afeter" the dot if the offset
+		// overlaps with the property expression or if the offset is 
+		// after the end of the member expression
 		if (!inRange(offset, memberExpr.range) ||
 			inRange(offset, memberExpr.object.range) ||
-			offset < end) {
+			offset > end) {
 			return false;
 		}
 		
@@ -563,6 +569,7 @@ define("esprimaJsContentAssist", [], function() {
 	function proposalGenerator(node, env) {
 		var type = node.type, oftype, name, i, property, params, plen, newTypeName;
 		
+		// FIXADE Do we still want to do this?
 		if (type === "VariableDeclaration" && isBefore(env.offset, node.range)) {
 			// must do this check since "VariableDeclarator"s do not seem to have their range set correctly
 			return false;
@@ -779,9 +786,27 @@ define("esprimaJsContentAssist", [], function() {
 	function parse(contents) {
 		var parsedProgram = esprima.parse(contents, {
 			range: true,
-			tolerant: true
+			tolerant: true,
+			comment: true
 		});
 		return parsedProgram;
+	}
+	
+	function addGlobals(root, env) {
+		if (root.comments) {
+			for (var i = 0; i < root.comments.length; i++) {
+				if (root.comments[i].type === "Block" && root.comments[i].value.substring(0, "global".length) === "global") {
+					var globals = root.comments[i].value;
+					var splits = globals.split(/\s+/);
+					for (var j = 1; j < splits.length; j++) {
+						if (splits[j].length > 0) {
+							env.addOrSetVariable(splits[j]);
+						}
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	function EsprimaJavaScriptContentAssistProvider() {}
@@ -1001,8 +1026,8 @@ define("esprimaJsContentAssist", [], function() {
 							throw "done";
 						}
 					};
-					// need to use a copy of types since we make changes to it.
 					try {
+						addGlobals(root, environment);
 						visit(root, environment, proposalGenerator, proposalGeneratorPostOp);
 					} catch (done) {
 						if (done !== "done") {
