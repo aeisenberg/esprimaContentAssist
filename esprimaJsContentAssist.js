@@ -24,21 +24,12 @@ define("esprimaJsContentAssist", [], function() {
 		this.Object = {
 			// Urrrgh...can't use the real name here because would override the real methods of that name
 			$_$prototype : "Object",
-			$_$toString: "String",
-			$_$toLocaleString : "String",
-			$_$valueOf: "Object",
-			$_$hasOwnProperty: "boolean",
-			$_$isPrototypeOf: "boolean",
-			$_$propertyIsEnumerable: "boolean",
-			
-			$$args : {
-				$_$toString: [],
-				$_$toLocaleString: [],
-				$_$hasOwnProperty: ["property"],
-				$_$isPrototypeOf: ["object"],
-				$_$propertyIsEnumerable: ["property"],
-				$_$valueOf: []
-			}
+			$_$toString: "?String:",
+			$_$toLocaleString : "?String:",
+			$_$valueOf: "?Object:",
+			$_$hasOwnProperty: "?boolean:property",
+			$_$isPrototypeOf: "?boolean:object",
+			$_$propertyIsEnumerable: "?boolean:property"
 		};
 		
 		// the global object
@@ -47,51 +38,32 @@ define("esprimaJsContentAssist", [], function() {
 			"this": "Global",  
 			Math: "Math",
 			JSON: "JSON",
-			$$proto : "Object",
-			$$args : { }
+			$$proto : "Object"
 		};
 		
 		/**
 		 * Properties common to all Strings - ECMA 262, section 15.5.4
 		 */
 		this.String = {
-			charAt : "String",
-			charCodeAt : "Number",
-			concat : "String",
-			indexOf : "Number",
-			lastIndexOf : "Number",
-			length : "Number",
-			localeCompare : "Number",
-			match : "Boolean",
-			replace : "String",
-			search : "String",
-			slice : "String",
-			split : "Array",  // Array of string
-			substring : "String",
-			toLocaleUpperCase : "String",
-			toLowerCase : "String",
-			toUpperCase : "String",
-			trim : "String",
+			charAt : "?String:index",
+			charCodeAt : "?Number:index",
+			concat : "?String:array",
+			indexOf : "?Number:searchString",
+			lastIndexOf : "?Number:searchString",
+			length : "?Number:",
+			localeCompare : "?Number:Object",
+			match : "?Boolean:regexp",
+			replace : "?String:searchValue,replaceValue",
+			search : "?String:regexp",
+			slice : "?String:start,end",
+			split : "?Array:separator,[limit]",  // Array of string
+			substring : "?String:start,end",
+			toLocaleUpperCase : "?String:",
+			toLowerCase : "?String:",
+			toUpperCase : "?String:",
+			trim : "?String:",
 
-			$$proto : "Object",
-			$$args : {
-				charAt : ["index"],
-				charCodeAt : ["index"],
-				concat : ["array"],
-				indexOf : ["searchString"],
-				lastIndexOf : ["searchString"],
-				localeCompare : ["object"],
-				match : ["regexp"],
-				replace : ["searchValue", "replaceValue"],
-				search : ["regexp"],
-				slice : ["start", "end"],
-				split : ["separator", "[limit]"],
-				substring : ["start", "[end]"],
-				toLowerCase : [],
-				toUpperCase : [],
-				toLocaleUpperCase : [],
-				trim : []
-			}
+			$$proto : "Object"
 		};
 		
 		/**
@@ -99,86 +71,58 @@ define("esprimaJsContentAssist", [], function() {
 		 */
 		this.Array = {
 			length : "Number",
-			sort : "Array",
-			concat : "Array",
-			slice : "Array",
-			$$proto : "Object",
-			$$args : {
-				sort : ["[sorter]"],
-				concat : ["left", "right"],
-				slice : ["start", "end"]
-			}
+			sort : "?Array:[sorter]",
+			concat : "?Array:left,right",
+			slice : "?Array:start,end",
+			$$proto : "Object"
 		};
 		
 		/**
 		 * Properties common to all dates.  may be incomplete
 		 */
 		this.Date = {
-			getDay : "Number",
-			getFullYear : "Number",
-			getHours : "Number",
-			getMinutes : "Number",
-			setDay : null,
-			setFullYear : null,
-			setHours : null,
-			setMinutes : null,
-			setTime : null,
-			$$proto : "Object",
-			$$args : {
-				getDay : [],
-				getFullYear : [],
-				getHours : [],
-				getMinutes : [],
-				setDay : ["dayOfWeek"],
-				setFullYear : ["year"],
-				setHours : ["hour"],
-				setMinutes : ["minute"],
-				setTime : ["millis"]
-			}
+			getDay : "?Number:",
+			getFullYear : "?Number:",
+			getHours : "?Number:",
+			getMinutes : "?Number:",
+			setDay : "?Number:dayOfWeek",
+			setFullYear : "?Number:year",
+			setHours : "?Number:hour",
+			setMinutes : "?Number:minute",
+			setTime : "?Number:millis",
+			$$proto : "Object"
 		};
 		
 		this.Boolean = {
-			$$proto : "Object",
-			$$args : {}
+			$$proto : "Object"
 		};
 		
 		this.Number = {
-			toExponential : "Number",
-			toFixed : "Number",
-			toPrecision : "Number",
+			toExponential : "?Number:digits",
+			toFixed : "?Number:digits",
+			toPrecision : "?Number:digits",
 			// do we want to include NaN, MAX_VALUE, etc?	
 		
-			$$proto : "Object",
-			$$args : {
-				toExponential : ["digits"],
-				toFixed : ["digits"],
-				toPrecision : ["digits"]
-			}
+			$$proto : "Object"
 		};
 		
 		// must refactor this part for the new format
 		this.Function = {
-			apply : "Object",
+			apply : "?Object:func,[args]",
 			"arguments" : "Arguments",
-			bind : null,
-			call : "Object",
+			bind : "?Object:",
+			call : "?Object:func,args",
 			caller : "Function",
 			length : "Number",
 			name : "String",
-			$$proto : "Object",
-			$$args : {
-				apply : ["func", "[args]"],
-				bind : [],
-				call: ["func", "args"]
-			}
+			$$proto : "Object"
 		};
 
 		this.Arguments = {
 			callee : "Function",
 			length : "Number",
 			
-			$$proto : "Object",
-			$$args : { }
+			$$proto : "Object"
 		};
 
 		this.RegExp = {
@@ -186,22 +130,17 @@ define("esprimaJsContentAssist", [], function() {
 			i : "Object",
 			gi : "Object",
 			m : "Object",
-			exec : "Array",
-			test : "Array",
+			exec : "?Array:str",
+			test : "?Array:str",
 			
-			$$proto : "Object",
-			$$args : {
-				exec : ["str"],
-				test : ["str"]
-			}
+			$$proto : "Object"
 		};
 		
 		this.Error = {
 			name : "String",
 			message : "String",
 			stack : "String",
-			$$proto : "Object",
-			$$args : { }
+			$$proto : "Object"
 		};
 		
 		
@@ -218,55 +157,31 @@ define("esprimaJsContentAssist", [], function() {
 			SQRT2 : "Number",
 		
 			// Methods
-			abs : "Number",
-			acos : "Number",
-			asin : "Number",
-			atan : "Number",
-			atan2 : "Number",
-			ceil : "Number",
-			cos : "Number",
-			exp : "Number",
-			floor : "Number",
-			log : "Number",
-			max : "Number",
-			min : "Number",
-			pow : "Number",
-			random : "Number",
-			round : "Number",
-			sin : "Number",
-			sqrt : "Number",
-			tan : "Number",
-			$$proto : "Object",
-			$$args : {
-				abs : ["val"],
-				acos : ["val"],
-				asin : ["val"],
-				atan : ["val"],
-				atan2 : ["val1", "val2"],
-				ceil : ["val"],
-				cos : ["val"],
-				exp : ["val"],
-				floor : ["val"],
-				log : ["val"],
-				max : ["val1", "val2"],
-				min : ["val1", "val2"],
-				pow : ["x", "y"],
-				random : [],
-				round : ["val"],
-				sin : ["val"],
-				sqrt : ["val"],
-				tan : ["val"]
-			}
+			abs : "?Number:val",
+			acos : "?Number:val",
+			asin : "?Number:val",
+			atan : "?Number:val",
+			atan2 : "?Number:val1,val2",
+			ceil : "?Number:val",
+			cos : "?Number:val",
+			exp : "?Number:val",
+			floor : "?Number:val",
+			log : "?Number:val",
+			max : "?Number:val1,val2",
+			min : "?Number:val1,val2",
+			pow : "?Number:x,y",
+			random : "?Number:",
+			round : "?Number:val",
+			sin : "?Number:val",
+			sqrt : "?Number:val",
+			tan : "?Number:val",
+			$$proto : "Object"
 		};
 
 		this.JSON = {
-			parse : "Object",
-			stringify : "String",
-			$$proto : "Object",
-			$$args : {
-				parse : ["str"],
-				stringify : ["obj"]
-			}
+			parse : "?Object:str",
+			stringify : "?String:obj",
+			$$proto : "Object"
 		};
 		
 	};
@@ -374,9 +289,15 @@ define("esprimaJsContentAssist", [], function() {
 	
 	/**
 	 * Convert an array of parameters into a string and also compute linked editing positions
+	 * @param name name of the function
+	 * @param type the type of the function using the following structure '?Type:arg1,arg2,...'
+	 * @param offset offset
 	 * @return { completion, positions }
 	 */
-	function calculateFunctionProposal(name, params, offset) {
+	function calculateFunctionProposal(name, type, offset) {
+		var paramsOffset = type.lastIndexOf(":"), paramsStr, params;
+		paramsStr = paramsOffset > 0 ? type.substring(paramsOffset+1) : "";
+		params = paramsStr.split(",");
 		if (!params || params.length === 0) {
 			return {completion: name + "()", positions:[]};
 		}
@@ -530,24 +451,7 @@ define("esprimaJsContentAssist", [], function() {
 			} else if (parent.type === "Program" || parent.type === "BlockStatement") {
 				// completion at a new expression
 				if (!prefix) {
-					// empty identifier
-					// add a synthetic ExpressionStatemtn and Identifier
-					// it doesn't have to be in the correct location since children are visited in lexical order
-					// also note that this means we create synthetic nodes for arguments of method calls and
-					// after binary expressions...I think this is all right. (ADE)
-					
-//					var exprStatement = { 
-//						expression : {
-//							name: "",  // an empty expression
-//							type: "Identifier",
-//							range : [offset, offset+1]
-//						},
-//						type :"ExpressionStatement",
-//						range : [offset, offset+1]
-//					};
-//					
-//					parent.body.push(exprStatement);
-
+				}
 			} else if (parent.type === "VariableDeclarator" && (!parent.init || isBefore(offset, parent.init.range))) {
 				// the name of a variable declaration
 				return false;
@@ -555,7 +459,6 @@ define("esprimaJsContentAssist", [], function() {
 					isBefore(offset, parent.body.range)) {
 				// a function declaration
 				return false;
-				}
 			}
 		}
 		return "top";
@@ -567,7 +470,7 @@ define("esprimaJsContentAssist", [], function() {
 	 * @param env the context for the visitor.  See computeProposals below for full description of contents
 	 */
 	function proposalGenerator(node, env) {
-		var type = node.type, oftype, name, i, property, params, plen, newTypeName;
+		var type = node.type, oftype, name, i, property, params, newTypeName;
 		
 		// FIXADE Do we still want to do this?
 		if (type === "VariableDeclaration" && isBefore(env.offset, node.range)) {
@@ -601,62 +504,64 @@ define("esprimaJsContentAssist", [], function() {
 					// all of the variables to reflect their final inferred type
 					env.addVariable(property.key.name, node, "Object");
 					if (property.value.type === "FunctionExpression") {
-						// RHS is a function, remember the name
+						// RHS is a function, remember the name in case it is a constructor
 						property.value.fname = property.key.name;
 					}
 				}
 			}
 			
-		} else if (type === "AssignmentExpression") {
-			if (node.left.name && node.right.type === "FunctionExpression") {
-				// RHS is a function, remember the name
-				node.right.fname = node.left.name;
-			}			
-		
 		} else if (type === "FunctionDeclaration" || type === "FunctionExpression") {
 
-			// FIXADE Function expressions have no name, so just use a generated name
-			// We need to do better, but for now, just tolerate.
 			if (node.id) {
+				// true for function declarations
 				name = node.id.name;
 			} else if (node.fname) {
-				// likely the RHS of an assignment
+				// true for rhs of assignment to function expression
 				name = node.fname;
 			}
-			params = node.params;
-			if (name && !isBefore(env.offset, node.range)) {
-				// if we have a name, then add it to the scope
-				env.addFunction(name, params, node.target, "Function");
+			params = [];
+			if (node.params) {
+				for (i = 0; i < node.params.length; i++) {
+					params[i] = node.params[i].name;
+				}
 			}
 			
-			// check for possible constructor
 			// assume that function name that starts with capital is 
 			// a constructor
 			if (name && node.body && name.charAt(0) === name.charAt(0).toUpperCase()) {
 				// create new object so that there is a custom "this"
 				node.body.isConstructor = true;
-				node.inferredType = env.newObject(name);
+				newTypeName = env.newObject(name);
 			} else {
-				// FIXADE we could do better here and infer the actual return type
-				// Also, should be returning a type of Function parameterized by its return type, not Function istelf
-				node.inferredType = "Function";
+				newTypeName = "Object";
+			}
+			newTypeName = "?" + newTypeName + ":" + params;
+			node.inferredType = newTypeName;
+			
+			if (name && !isBefore(env.offset, node.range)) {
+				// if we have a name, then add it to the scope
+				env.addVariable(name, node.target, newTypeName);
 			}
 			
+			// now add the scope for inside the function
 			env.newScope();
 			env.addVariable("arguments", node.target, "Arguments");
 
 			// add parameters to the current scope
-			if (params && params.length > 0) {
-				plen = params.length;
-				for (i = 0; i < plen; i++) {
-					name = params[i].name;
-					env.addVariable(name, node.target);
+			if (params.length > 0) {
+				for (i = 0; i < params.length; i++) {
+					env.addVariable(params[i], node.target);
 				}	
 			}
 		} else if (type === "VariableDeclarator") {
 			if (node.id.name && node.init && node.init.type === "FunctionExpression") {
-				// RHS is a function, remember the name
+				// RHS is a function, remember the name in case it is a constructor
 				node.init.fname = node.id.name;
+			}
+		} else if (type === "AssignmentExpression") {
+			if (node.left.type === "Identifier" && node.right.type === "FunctionExpression") {
+				// RHS is a function, remember the name in case it is a constructor
+				node.right.fname = node.left.name;
 			}
 		} else if (type === "CatchClause") {
 			// create a new scope for the catch parameter
@@ -705,7 +610,14 @@ define("esprimaJsContentAssist", [], function() {
 			// node.propery will be null for mal-formed asts
 			node.inferredType = node.property ? node.property.inferredType : node.object.inferredType;
 		} else if (type === "CallExpression") {
-			node.inferredType = node.callee.inferredType;
+			// apply the function
+			var fnType = node.callee.inferredType;
+			if (fnType.charAt(0) === '?') {
+				var typeEnd = fnType.lastIndexOf(':');
+				typeEnd = typeEnd >0 ? typeEnd : fnType.length;
+				fnType = fnType.substring(1,typeEnd);
+			}
+			node.inferredType = fnType;
 		} else if (type === "ObjectExpression") {
 			// now that we know all the types of the values, use that to populate the types of the keys
 			// FIXADE esprima has changed the way it does key-value pairs,  Should do it differently here
@@ -851,8 +763,7 @@ define("esprimaJsContentAssist", [], function() {
 							var targetType = this.scope();
 							var newScopeName = this.newName();
 							this._allTypes[newScopeName] = {
-								$$proto : targetType,
-								$$args : {}
+								$$proto : targetType
 							};
 							this._scopeStack.push(newScopeName);
 							return newScopeName;
@@ -860,15 +771,14 @@ define("esprimaJsContentAssist", [], function() {
 						
 						/** Creates a new empty object scope and returns the name of this object */
 						newObject: function(newObjectName) {
-							// the prototype is always "Object"
+							// object needs its own scope
 							this.newScope();
 							// if no name passed in, create a new one
 							newObjectName = newObjectName? newObjectName : this.newName();
 							// assume that objects have their own "this" object
 							// prototype of Object
 							this._allTypes[newObjectName] = {
-								$$proto : "Object",
-								$$args : {}
+								$$proto : "Object"
 							};
 							this.addVariable("this", null, newObjectName);
 							
@@ -932,15 +842,15 @@ define("esprimaJsContentAssist", [], function() {
 							}
 						},
 						
-						/** adds the name and args (array of strings) with the given return type to the current type */
-						addFunction : function(name, args, target, type) {
-							var targetType = this.scope(target);
-							this._allTypes[targetType][name] = type ? type : "Object";
-							this._allTypes[targetType].$$args[name] = args;
-						},
+//						/** adds the name and args (array of strings) with the given return type to the current type */
+//						addFunction : function(name, args, target, type) {
+//							var targetType = this.scope(target);
+//							type = type ? type : "Object";
+//							this._allTypes[targetType][name] = "?" + type + ":" + args.join(",");
+//						},
 						
 						/** looks up the name in the hierarchy */
-						lookupName : function(name, target) {
+						lookupName : function(name, target, applyFunction) {
 						
 							// translate function names on object into safe names
 							var swapper = function(name) {
@@ -972,19 +882,38 @@ define("esprimaJsContentAssist", [], function() {
 									return null;
 								}
 							};
-							return innerLookup(swapper(name), this._allTypes[this.scope(target)], this._allTypes);
+							var targetType = this._allTypes[this.scope(target)];
+							var res = innerLookup(swapper(name), targetType, this._allTypes);
+//							if (res && res.charAt(0) === '?') {
+//								// we have a function, determine if we must apply it or not
+//								if (applyFunction) {
+//									var typeEnd = res.lastIndexOf(':');
+//									if (typeEnd > 0) {
+//										res = res.substring(1, typeEnd);
+//									} else {
+//										// malformed
+//										res = "Function";
+//									}
+//								} else {
+//									res = "Function";
+//								}
+//							}
+							return res;
 						},
 						
 						createProposals : function(targetType) {
 							if (!targetType) {
 								targetType = this.scope();
 							}
-							var prop, propName, proto, res, functionArgs, type = this._allTypes[targetType];
+							if (targetType.charAt(0) === '?') {
+								targetType = "Function";
+							}
+							var prop, propName, propType, proto, res, type = this._allTypes[targetType];
 							proto = type.$$proto;
 							
 							for (prop in type) {
 								if (type.hasOwnProperty(prop)) {
-									if (prop === "$$proto" || prop === "$$args") {
+									if (prop === "$$proto") {
 										continue;
 									}
 									if (!proto && prop.indexOf("$_$") === 0) {
@@ -999,10 +928,11 @@ define("esprimaJsContentAssist", [], function() {
 										continue;
 									}
 									if (propName.indexOf(this.prefix) === 0) {
-										functionArgs = type.$$args[prop];
-										if (functionArgs) {
+										propType = type[prop];
+										if (propType.charAt(0) === '?') {
+											// we have a function
 											res = calculateFunctionProposal(propName, 
-													functionArgs, this.replaceStart - 1);
+													propType, this.replaceStart - 1);
 											this.proposals.push({ 
 												proposal: res.completion, 
 												description: res.completion + " (esprima)", 
