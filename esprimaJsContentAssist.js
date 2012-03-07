@@ -16,6 +16,8 @@ define("esprimaJsContentAssist", [], function() {
 
 	/**
 	 * A prototype of that contains the common built-in types
+	 * Types that begin with '?' are functions.  The values after the ':' are the 
+	 * argument names.
 	 */
 	var Types = function() {
 		/**
@@ -935,14 +937,14 @@ define("esprimaJsContentAssist", [], function() {
 													propType, this.replaceStart - 1);
 											this.proposals.push({ 
 												proposal: res.completion, 
-												description: res.completion + " (esprima)", 
+												description: res.completion + " : " + this.createReadableType(propType) + " (esprima)", 
 												positions: res.positions, 
 												escapePosition: this.replaceStart + res.completion.length 
 											});
 										} else {
 											this.proposals.push({ 
 												proposal: propName,
-												description: propName + " (esprima)"
+												description: propName + " : " + this.createReadableType(propType) + " (esprima)"
 											});
 										}
 									}
@@ -954,6 +956,33 @@ define("esprimaJsContentAssist", [], function() {
 							}
 							// We're done!
 							throw "done";
+						},
+						
+						/**
+						 * creates a human readable type name from the name given
+						 */
+						createReadableType : function(typeName) {
+							if (typeName.charAt(0) === "?") {
+								// a function, use the return type
+								var nameEnd = typeName.indexOf(":");
+								if (nameEnd === -1) {
+									nameEnd = typeName.length;
+								}
+								return typeName.substring(1, nameEnd);
+							} else if (typeName.indexOf("gen~") === 0) {
+								// a generated object
+								// create a summary
+								var type = this._allTypes[typeName];
+								var res = "{ ";
+								for (var val in type) {
+									if (type.hasOwnProperty(val) && val !== "$$proto") {
+										res += val + " ";
+									}
+								}
+								return res + "}";
+							} else {
+								return typeName;
+							}
 						}
 					};
 					try {
