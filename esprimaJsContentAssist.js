@@ -705,7 +705,11 @@ define("esprimaJsContentAssist", [], function() {
 		});
 		return parsedProgram;
 	}
-	
+
+	function removePrefix(prefix, string) {
+		return string.substring(prefix.length);
+	}
+
 	function addGlobals(root, env) {
 		if (root.comments) {
 			for (var i = 0; i < root.comments.length; i++) {
@@ -936,14 +940,14 @@ define("esprimaJsContentAssist", [], function() {
 											res = calculateFunctionProposal(propName, 
 													propType, this.replaceStart - 1);
 											this.proposals.push({ 
-												proposal: res.completion, 
+												proposal: removePrefix(this.prefix, res.completion), 
 												description: res.completion + " : " + this.createReadableType(propType) + " (esprima)", 
 												positions: res.positions, 
 												escapePosition: this.replaceStart + res.completion.length 
 											});
 										} else {
 											this.proposals.push({ 
-												proposal: propName,
+												proposal: removePrefix(this.prefix, propName),
 												description: propName + " : " + this.createReadableType(propType) + " (esprima)"
 											});
 										}
