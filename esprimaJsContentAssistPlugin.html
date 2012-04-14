@@ -13,7 +13,7 @@ require(["esprimaJsContentAssist"], function(esprimaContentAssistPlugin) {
 	var provider = new eclipse.PluginProvider();
 	provider.registerServiceProvider("orion.edit.contentAssist", 
 			new esprimaContentAssistPlugin.EsprimaJavaScriptContentAssistProvider(), {
-		contentType: ["text.javascript"],
+		contentType: ["application/javascript"],
 		name: "Esprima based JavaScript content assist",
 		id: "orion.edit.contentassist.esprima"
 	});
