@@ -705,7 +705,11 @@ define("esprimaJsContentAssist", [], function() {
 		});
 		return parsedProgram;
 	}
-	
+
+	function removePrefix(prefix, string) {
+		return string.substring(prefix.length);
+	}
+
 	function addGlobals(root, env) {
 		if (root.comments) {
 			for (var i = 0; i < root.comments.length; i++) {
@@ -729,11 +733,11 @@ define("esprimaJsContentAssist", [], function() {
 	 * Main entry point to provider
 	 */
 	EsprimaJavaScriptContentAssistProvider.prototype = {
-		computeProposals: function(prefix, buffer, selection) {
+		computeProposals: function(buffer, offset, context) {
 			try {
 				var root = parse(buffer);
 				// note that if selection has length > 0, then just ignore everything past the start
-				var completionKind = shouldVisit(root, selection.offset, prefix, buffer);
+				var completionKind = shouldVisit(root, offset, context.prefix, buffer);
 				if (completionKind) {
 					var environment = {
 						/** Each element is the type of the current scope, which is a key into the types array */
@@ -747,13 +751,13 @@ define("esprimaJsContentAssist", [], function() {
 						/** an array of proposals generated */
 						proposals : [], 
 						/** the offset of content assist invocation */
-						offset : selection.offset, 
+						offset : offset, 
 						/** 
 						 * the location of the start of the area that will be replaced 
 						 */
-						replaceStart : selection.offset - prefix.length, 
+						replaceStart : offset - context.prefix.length, 
 						/** the prefix of the invocation */
-						prefix : prefix, 
+						prefix : context.prefix, 
 						/** the entire contents being completed on */
 						contents : buffer,
 						newName: function() {
@@ -936,14 +940,14 @@ define("esprimaJsContentAssist", [], function() {
 											res = calculateFunctionProposal(propName, 
 													propType, this.replaceStart - 1);
 											this.proposals.push({ 
-												proposal: res.completion, 
+												proposal: removePrefix(this.prefix, res.completion), 
 												description: res.completion + " : " + this.createReadableType(propType) + " (esprima)", 
 												positions: res.positions, 
 												escapePosition: this.replaceStart + res.completion.length 
 											});
 										} else {
 											this.proposals.push({ 
-												proposal: propName,
+												proposal: removePrefix(this.prefix, propName),
 												description: propName + " : " + this.createReadableType(propType) + " (esprima)"
 											});
 										}
