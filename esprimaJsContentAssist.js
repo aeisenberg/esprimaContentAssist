@@ -311,7 +311,16 @@ define("esprimaJsContentAssist", [], function() {
 			if (p > 0) {
 				completion += ', ';
 			}
-			var argName = params[p].name ? params[p].name : params[p];
+			var argName;
+			if (typeof params[p] === "string") {
+				// need this because jslintworker.js augments the String prototype with a name() function
+				// don't want confusion
+				argName = params[p];
+			} else if (params[p].name) {
+				argName = params[p].name();
+			} else {
+				argName = params[p];
+			}
 			positions.push({offset:offset+completion.length+1, length: argName.length});
 			completion += argName;
 		}
@@ -933,7 +942,6 @@ define("esprimaJsContentAssist", [], function() {
 		return parsedProgram;
 	}
 	
-
 	/**
 	 * add variable names from inside a jslint global directive
 	 */
