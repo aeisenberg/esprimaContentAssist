@@ -6,13 +6,23 @@
 <script type="text/javascript" src="http://orion.eclipse.org/orion/plugin.js"></script>
 <script type="text/javascript" src="http://orion.eclipse.org/requirejs/require.js"></script>
 <script type="text/javascript" src="esprima.js"></script>
-<script type="text/javascript" src="esprimaJsContentAssist.js"></script>
 <script>
 /*global eclipse require */
-require(["esprimaJsContentAssist"], function(esprimaContentAssistPlugin) {
+require(["esprimaJsContentAssist", "indexerService"], function(esprimaContentAssistPlugin, mIndexerService) {
+
 	var provider = new eclipse.PluginProvider();
+	var indexer = new mIndexerService.Indexer();
+	// we need to be notified when file is opened or when it is saved.
+	// happens to be that the validator tells us this information
+	provider.registerServiceProvider("orion.edit.validator",
+		{ checkSyntax: indexer.performIndex }, 
+		{ contentType: ["application/javascript"] }
+	);
+	
+	
+
 	provider.registerServiceProvider("orion.edit.contentAssist", 
-			new esprimaContentAssistPlugin.EsprimaJavaScriptContentAssistProvider(), {
+			new esprimaContentAssistPlugin.EsprimaJavaScriptContentAssistProvider(indexer), {
 		contentType: ["application/javascript"],
 		name: "Esprima based JavaScript content assist",
 		id: "orion.edit.contentassist.esprima"
